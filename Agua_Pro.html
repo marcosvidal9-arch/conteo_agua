@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Hidratación</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-gradient-start: #667eea;
+      --bg-gradient-end: #764ba2;
+      --container-bg: #ffffff;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --accent-color: #667eea;
+      --accent-hover: #5568d3;
+      --section-bg: #f8f9ff;
+      --border-color: #ddd;
+      --success-color: #10b981;
+      --success-hover: #059669;
+      --danger-color: #ef4444;
+      --danger-hover: #dc2626;
+      --warning-color: #f59e0b;
+      --warning-hover: #d97706;
+      --card-shadow: rgba(0,0,0,0.1);
+    }
+
+    body.dark-mode {
+      --bg-gradient-start: #1a1a2e;
+      --bg-gradient-end: #16213e;
+      --container-bg: #0f3460;
+      --text-primary: #e4e4e7;
+      --text-secondary: #a1a1aa;
+      --accent-color: #8b5cf6;
+      --accent-hover: #7c3aed;
+      --section-bg: #1a2942;
+      --border-color: #2d3748;
+      --card-shadow: rgba(0,0,0,0.3);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .container {
+      background: var(--container-bg);
+      border-radius: 24px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px var(--card-shadow);
+      transition: background 0.3s ease;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      color: var(--accent-color);
+      font-size: 1.8rem;
+      transition: color 0.3s ease;
+    }
+
+    .theme-toggle {
+      background: var(--section-bg);
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(15deg);
+    }
+
+    .fecha {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .motivacion-card {
+      background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+      padding: 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      color: white;
+      text-align: center;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .motivacion-emoji {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .motivacion-texto {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .meta-section {
+      background: var(--section-bg);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      transition: background 0.3s ease;
+    }
+
+    .meta-input {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-input label {
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: color 0.3s ease;
+    }
+
+    .meta-input input {
+      padding: 0.5rem;
+      border: 2px solid var(--accent-color);
+      border-radius: 8px;
+      width: 100px;
+      font-size: 1rem;
+      background: var(--container-bg);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .meta-input button {
+      padding: 0.5rem 1rem;
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .meta-input button:hover {
+      background: var(--accent-hover);
+    }
+
+    .progreso-principal {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .cantidad-actual {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      transition: color 0.3s ease;
+    }
+
+    .cantidad-meta {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    .barra-progreso {
+      background: var(--section-bg);
+      height: 30px;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .barra-relleno {
+      background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-hover) 100%);
+      height: 100%;
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 10px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    .porcentaje {
+      text-align: center;
+      color: var(--accent-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .beneficios-rapidos {
+      background: var(--section-bg);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      transition: background 0.3s ease;
+    }
+
+    .beneficio-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      background: var(--container-bg);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      opacity: 0.5;
+    }
+
+    .beneficio-item.desbloqueado {
+      opacity: 1;
+      animation: desbloquear 0.5s ease;
+    }
+
+    @keyframes desbloquear {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .beneficio-item .icono {
+      font-size: 1.3rem;
+    }
+
+    .beneficio-item .texto {
+      flex: 1;
+      line-height: 1.3;
+    }
+
+    .botones-rapidos {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .boton-cantidad {
+      padding: 1rem;
+      border: 2px solid var(--accent-color);
+      background: var(--container-bg);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      color: var(--text-primary);
+    }
+
+    .boton-cantidad:hover {
+      background: var(--accent-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px var(--card-shadow);
+    }
+
+    .boton-cantidad .icono {
+      font-size: 1.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .boton-cantidad .texto {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .boton-cantidad .ml {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      transition: color 0.3s ease;
+    }
+
+    .boton-cantidad:hover .ml {
+      color: white;
+    }
+
+    .custom-input {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .custom-input input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: var(--container-bg);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .custom-input input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .custom-input button {
+      padding: 0.75rem 1.5rem;
+      background: var(--success-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .custom-input button:hover {
+      background: var(--success-hover);
+    }
+
+    .historial {
+      background: var(--section-bg);
+      padding: 1rem;
+      border-radius: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .historial h3 {
+      color: var(--accent-color);
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .historial-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem;
+      background: var(--container-bg);
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: background 0.3s ease;
+    }
+
+    .historial-item .hora {
+      color: var(--text-secondary);
+      transition: color 0.3s ease;
+    }
+
+    .historial-item .cantidad {
+      color: var(--accent-color);
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .historial-vacio {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 1rem;
+      font-style: italic;
+      transition: color 0.3s ease;
+    }
+
+    .botones-accion {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .boton-accion {
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      color: white;
+    }
+
+    .boton-reset {
+      background: var(--danger-color);
+    }
+
+    .boton-reset:hover {
+      background: var(--danger-hover);
+      transform: translateY(-2px);
+    }
+
+    .boton-deshacer {
+      background: var(--warning-color);
+    }
+
+    .boton-deshacer:hover {
+      background: var(--warning-hover);
+      transform: translateY(-2px);
+    }
+
+    .mensaje-exito {
+      background: linear-gradient(135deg, var(--success-color), var(--success-hover));
+      color: white;
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: none;
+      animation: aparecer 0.5s ease;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .mensaje-exito.visible {
+      display: block;
+    }
+
+    .estadisticas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--section-bg);
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+      transition: background 0.3s ease;
+    }
+
+    .stat-numero {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      transition: color 0.3s ease;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+      transition: color 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>💧 Hidratación</h1>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
+    </div>
+    <div class="fecha" id="fecha"></div>
+
+    <div class="motivacion-card" id="motivacion-card">
+      <div class="motivacion-emoji" id="motivacion-emoji">💪</div>
+      <div class="motivacion-texto" id="motivacion-texto">
+        ¡Comienza tu día hidratándote! El agua es vida.
+      </div>
+    </div>
+
+    <div class="meta-section">
+      <div class="meta-input">
+        <label>Meta diaria:</label>
+        <input type="number" id="meta-input" value="2000" min="500" max="5000" step="100">
+        <span style="color: var(--text-primary);">ml</span>
+        <button onclick="actualizarMeta()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="mensaje-exito" id="mensaje-exito">
+      🎉 ¡Felicidades! ¡Has alcanzado tu meta de hidratación del día!
+    </div>
+
+    <div class="progreso-principal">
+      <div class="cantidad-actual" id="cantidad-actual">0 ml</div>
+      <div class="cantidad-meta">de <span id="meta-display">2000</span> ml</div>
+    </div>
+
+    <div class="barra-progreso">
+      <div class="barra-relleno" id="barra-relleno">
+        <span id="porcentaje-barra"></span>
+      </div>
+    </div>
+
+    <div class="porcentaje" id="porcentaje">0%</div>
+
+    <div class="estadisticas">
+      <div class="stat-card">
+        <div class="stat-numero" id="stat-tomas">0</div>
+        <div class="stat-label">Tomas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-numero" id="stat-promedio">0</div>
+        <div class="stat-label">Promedio ml</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-numero" id="stat-falta">2000</div>
+        <div class="stat-label">Falta ml</div>
+      </div>
+    </div>
+
+    <div class="beneficios-rapidos">
+      <div class="beneficio-item" data-nivel="0">
+        <span class="icono">🔒</span>
+        <span class="texto"><strong>0ml:</strong> ¡Empecemos! Cada gota cuenta</span>
+      </div>
+      <div class="beneficio-item" data-nivel="500">
+        <span class="icono">💧</span>
+        <span class="texto"><strong>500ml:</strong> Mejora tu concentración</span>
+      </div>
+      <div class="beneficio-item" data-nivel="1000">
+        <span class="icono">✨</span>
+        <span class="texto"><strong>1L:</strong> Tu piel se hidrata mejor</span>
+      </div>
+      <div class="beneficio-item" data-nivel="1500">
+        <span class="icono">⚡</span>
+        <span class="texto"><strong>1.5L:</strong> Más energía y vitalidad</span>
+      </div>
+      <div class="beneficio-item" data-nivel="2000">
+        <span class="icono">🎯</span>
+        <span class="texto"><strong>2L:</strong> ¡Meta alcanzada! Salud óptima</span>
+      </div>
+    </div>
+
+    <div class="botones-rapidos">
+      <button class="boton-cantidad" onclick="agregarAgua(250)">
+        <div class="icono">🥤</div>
+        <div class="texto">Vaso</div>
+        <div class="ml">250 ml</div>
+      </button>
+      <button class="boton-cantidad" onclick="agregarAgua(500)">
+        <div class="icono">🍶</div>
+        <div class="texto">Botella chica</div>
+        <div class="ml">500 ml</div>
+      </button>
+      <button class="boton-cantidad" onclick="agregarAgua(750)">
+        <div class="icono">🧃</div>
+        <div class="texto">Botella grande</div>
+        <div class="ml">750 ml</div>
+      </button>
+      <button class="boton-cantidad" onclick="agregarAgua(1000)">
+        <div class="icono">🚰</div>
+        <div class="texto">Litro</div>
+        <div class="ml">1000 ml</div>
+      </button>
+    </div>
+
+    <div class="custom-input">
+      <input type="number" id="cantidad-custom" placeholder="Cantidad personalizada (ml)" min="1">
+      <button onclick="agregarCantidadCustom()">Agregar</button>
+    </div>
+
+    <div class="historial">
+      <h3>📋 Historial de hoy</h3>
+      <div id="historial-lista" class="historial-vacio">
+        Aún no has registrado ninguna toma
+      </div>
+    </div>
+
+    <div class="botones-accion">
+      <button class="boton-accion boton-deshacer" onclick="deshacer()">↶ Deshacer</button>
+      <button class="boton-accion boton-reset" onclick="resetearDia()">🔄 Reiniciar día</button>
+    </div>
+  </div>
+
+  <script>
+    let cantidadTotal = 0;
+    let metaDiaria = 2000;
+    let historial = [];
+    let fechaActual = new Date().toDateString();
+    let darkMode = false;
+
+    const mensajesMotivacion = [
+      { emoji: "💪", texto: "¡Comienza tu día hidratándote! El agua es vida.", min: 0 },
+      { emoji: "🌟", texto: "¡Vas bien! El agua mejora tu memoria y concentración.", min: 500 },
+      { emoji: "🚀", texto: "¡Excelente progreso! Tu metabolismo se acelera con agua.", min: 1000 },
+      { emoji: "🏆", texto: "¡Casi lo logras! El agua ayuda a eliminar toxinas.", min: 1500 },
+      { emoji: "🎉", texto: "¡Increíble! Mantener esta hidratación reduce dolores de cabeza.", min: 2000 },
+      { emoji: "👑", texto: "¡Eres un campeón de la hidratación! Tu cuerpo te lo agradece.", min: 2500 }
+    ];
+
+    function cargarDatos() {
+      const datos = {
+        cantidadTotal: parseInt(sessionStorage.getItem('cantidadTotal')) || 0,
+        metaDiaria: parseInt(sessionStorage.getItem('metaDiaria')) || 2000,
+        historial: JSON.parse(sessionStorage.getItem('historial')) || [],
+        fecha: sessionStorage.getItem('fecha') || fechaActual,
+        darkMode: sessionStorage.getItem('darkMode') === 'true'
+      };
+
+      if (datos.fecha !== fechaActual) {
+        resetearDia();
+        return;
+      }
+
+      cantidadTotal = datos.cantidadTotal;
+      metaDiaria = datos.metaDiaria;
+      historial = datos.historial;
+      darkMode = datos.darkMode;
+
+      if (darkMode) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-btn').textContent = '☀️';
+      }
+
+      document.getElementById('meta-input').value = metaDiaria;
+      actualizarUI();
+    }
+
+    function guardarDatos() {
+      sessionStorage.setItem('cantidadTotal', cantidadTotal);
+      sessionStorage.setItem('metaDiaria', metaDiaria);
+      sessionStorage.setItem('historial', JSON.stringify(historial));
+      sessionStorage.setItem('fecha', fechaActual);
+      sessionStorage.setItem('darkMode', darkMode);
+    }
+
+    function toggleTheme() {
+      darkMode = !darkMode;
+      document.body.classList.toggle('dark-mode');
+      document.getElementById('theme-btn').textContent = darkMode ? '☀️' : '🌙';
+      guardarDatos();
+    }
+
+    function agregarAgua(cantidad) {
+      const yaCompletado = cantidadTotal >= metaDiaria;
+      
+      cantidadTotal += cantidad;
+      historial.push({
+        cantidad: cantidad,
+        hora: new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })
+      });
+      
+      guardarDatos();
+      actualizarUI();
+
+      if (!yaCompletado && cantidadTotal >= metaDiaria) {
+        mostrarMensajeExito();
+      }
+    }
+
+    function agregarCantidadCustom() {
+      const input = document.getElementById('cantidad-custom');
+      const cantidad = parseInt(input.value);
+      
+      if (cantidad && cantidad > 0) {
+        agregarAgua(cantidad);
+        input.value = '';
+      }
+    }
+
+    function deshacer() {
+      if (historial.length === 0) return;
+      
+      const ultimo = historial.pop();
+      cantidadTotal -= ultimo.cantidad;
+      
+      guardarDatos();
+      actualizarUI();
+    }
+
+    function resetearDia() {
+      if (historial.length > 0 && !confirm('¿Estás seguro de que quieres reiniciar el día?')) {
+        return;
+      }
+      
+      cantidadTotal = 0;
+      historial = [];
+      
+      guardarDatos();
+      actualizarUI();
+      
+      document.getElementById('mensaje-exito').classList.remove('visible');
+    }
+
+    function actualizarMeta() {
+      const nuevaMeta = parseInt(document.getElementById('meta-input').value);
+      if (nuevaMeta >= 500 && nuevaMeta <= 5000) {
+        metaDiaria = nuevaMeta;
+        guardarDatos();
+        actualizarUI();
+      }
+    }
+
+    function actualizarMotivacion() {
+      let mensajeActual = mensajesMotivacion[0];
+      for (let i = mensajesMotivacion.length - 1; i >= 0; i--) {
+        if (cantidadTotal >= mensajesMotivacion[i].min) {
+          mensajeActual = mensajesMotivacion[i];
+          break;
+        }
+      }
+      
+      document.getElementById('motivacion-emoji').textContent = mensajeActual.emoji;
+      document.getElementById('motivacion-texto').textContent = mensajeActual.texto;
+    }
+
+    function actualizarBeneficios() {
+      const beneficios = document.querySelectorAll('.beneficio-item');
+      beneficios.forEach(item => {
+        const nivel = parseInt(item.getAttribute('data-nivel'));
+        if (cantidadTotal >= nivel) {
+          item.classList.add('desbloqueado');
+        } else {
+          item.classList.remove('desbloqueado');
+        }
+      });
+    }
+
+    function actualizarEstadisticas() {
+      const numTomas = historial.length;
+      const promedio = numTomas > 0 ? Math.round(cantidadTotal / numTomas) : 0;
+      const falta = Math.max(0, metaDiaria - cantidadTotal);
+
+      document.getElementById('stat-tomas').textContent = numTomas;
+      document.getElementById('stat-promedio').textContent = promedio;
+      document.getElementById('stat-falta').textContent = falta;
+    }
+
+    function actualizarUI() {
+      const porcentaje = Math.min((cantidadTotal / metaDiaria) * 100, 100);
+      
+      document.getElementById('cantidad-actual').textContent = `${cantidadTotal} ml`;
+      document.getElementById('meta-display').textContent = metaDiaria;
+      document.getElementById('barra-relleno').style.width = `${porcentaje}%`;
+      document.getElementById('porcentaje').textContent = `${Math.round(porcentaje)}%`;
+      
+      if (porcentaje >= 100) {
+        document.getElementById('porcentaje-barra').textContent = '✓';
+      } else if (porcentaje >= 20) {
+        document.getElementById('porcentaje-barra').textContent = `${Math.round(porcentaje)}%`;
+      } else {
+        document.getElementById('porcentaje-barra').textContent = '';
+      }
+
+      const historialLista = document.getElementById('historial-lista');
+      if (historial.length === 0) {
+        historialLista.className = 'historial-vacio';
+        historialLista.textContent = 'Aún no has registrado ninguna toma';
+      } else {
+        historialLista.className = '';
+        historialLista.innerHTML = historial.map(item => `
+          <div class="historial-item">
+            <span class="hora">${item.hora}</span>
+            <span class="cantidad">+${item.cantidad} ml</span>
+          </div>
+        `).reverse().join('');
+      }
+
+      actualizarMotivacion();
+      actualizarBeneficios();
+      actualizarEstadisticas();
+    }
+
+    function mostrarMensajeExito() {
+      const mensaje = document.getElementById('mensaje-exito');
+      mensaje.classList.add('visible');
+      
+      setTimeout(() => {
+        mensaje.classList.remove('visible');
+      }, 5000);
+    }
+
+    document.getElementById('fecha').textContent = new Date().toLocaleDateString('es', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    document.getElementById('cantidad-custom').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        agregarCantidadCustom();
+      }
+    });
+
+    cargarDatos();
+  </script>
+</body>
+</html>
